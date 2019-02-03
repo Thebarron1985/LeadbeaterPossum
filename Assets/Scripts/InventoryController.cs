@@ -46,4 +46,9 @@ public class InventoryController : MonoBehaviour {
 
         inventoryText.text = inventoryString;
     }
+
+    public void RemoveItem()
+    {
+        inventoryList.Clear();
+    }
 }

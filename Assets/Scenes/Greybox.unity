@@ -13357,6 +13357,8 @@ GameObject:
   - component: {fileID: 1679576917}
   - component: {fileID: 1679576916}
   - component: {fileID: 1679576915}
+  - component: {fileID: 1679576920}
+  - component: {fileID: 1679576921}
   m_Layer: 0
   m_Name: Kiddy
   m_TagString: Untagged
@@ -13376,6 +13378,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiredFood: Succulence
+  toFollow: {fileID: 726047439}
+  followLimiter: {x: 4, y: 4, z: 4}
+  speed: 4
 --- !u!135 &1679576916
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -13443,6 +13448,33 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1679576920
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1679576914}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1679576921
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1679576914}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 1
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 2
+  m_CollisionDetection: 0
 --- !u!1 &1679763339
 GameObject:
   m_ObjectHideFlags: 0
@@ -16763,6 +16795,52 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2109867048}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &2112394919
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 21.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 8.67
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0.08418464
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0.38768798
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0.19478664
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.8970335
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604436595857852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640847067589852, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+      propertyPath: m_Name
+      value: Food (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 745db32ac748c6e4396cb75b06ee35c9, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &2115781315
 GameObject:
   m_ObjectHideFlags: 0
