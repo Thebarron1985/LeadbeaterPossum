@@ -11,47 +11,82 @@ public class ChildrenScript : MonoBehaviour {
     //private Vector3 offset;
     public Vector3 followLimiter;
     public float speed;
+    public GameObject parentTrigger;
+    public bool childClose = false;
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.tag == "Player")
-    //    {
-    //        if (!GameObject.FindObjectOfType<InventoryController>().CheckItem(requiredFood))
-    //        {
-    //            return;
-    //        }
+    public int waitSeconds = 1;
 
-    //        GameObject.FindObjectOfType<InventoryController>().RemoveItem();
-    //        Debug.Log("Removed food from inventory");
-
-    //    }
-    //}
+    private float loseSpeed = 0f;
+    private float rememberSpeed;
 
     // Use this for initialization
     void Start () {
-        
+        rememberSpeed = speed;
 	}
+
+    private void OnTriggerEnter(Collider other)
+    {
+        
+
+        if (other.tag == "Player")
+        {
+            GameObject.FindObjectOfType<InventoryController>().RemoveItem();
+            
+            childClose = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            speed = loseSpeed;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            childClose = false;
+            speed = rememberSpeed;
+        }
+    }
+
 	
 	// Update is called once per frame
 	void Update ()
     {
-        targetPos = toFollow.position;
-
-        if (transform.position == followLimiter)
+        
+        if (childClose == false)
         {
-            return;
-        }
-        else
-        {
-            Move();
-        }
-        //if (transform.position <= followLimiter)
-        //{
 
-        //}
-        //transform.position = toFollow.position - offset;
-        //transform.rotation = toFollow.rotation;
+            targetPos = toFollow.position;
+
+            if (transform.position == followLimiter)
+            {
+                return;
+            }
+            else
+            {
+                //yield return new WaitForSeconds(waitSeconds);
+
+                Invoke("Move", waitSeconds);
+            }
+            //if (transform.position <= followLimiter)
+            //{
+
+            //}
+            //transform.position = toFollow.position - offset;
+            //transform.rotation = toFollow.rotation;
+        }
 	}
+
+    //IEnumerator LateUpdate()
+    //{
+    //    yield return new WaitForSeconds(waitSeconds);
+    //    Move();
+    //}
 
     private void Move()
     {
@@ -70,4 +105,5 @@ public class ChildrenScript : MonoBehaviour {
         // Lerp gives us the absolute position, so we pass it straight into our transform.
         transform.position = Vector3.Lerp(transform.position, targetPos, increment);
     }
+
 }
