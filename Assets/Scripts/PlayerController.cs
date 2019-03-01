@@ -71,6 +71,10 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKey(forwardKey))
         {
             gameObject.GetComponent<Rigidbody>().AddRelativeForce(sideMovement, ForceMode.Impulse);
+            if (onTheGround == false)
+            {
+                
+            }
         }
 
         if (Input.GetKey(backKey))
