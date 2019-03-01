@@ -12,234 +12,110 @@ public class PlayerController : MonoBehaviour {
     public KeyCode climbDownKey = KeyCode.DownArrow;
 
     public Vector3 sideMovement;
-    public float playerSpeed = 0.5f;
-    public float airSpeed = 0.5f;
 
     private bool onTheGround = true;
-    private bool onTree = false; 
+    private bool onTree = false;
 
-    private Vector3 jump;
-    public float jumpHeight = 2f;
-    public float climbSpeed = 1f;
+    public Vector3 jump;
+
+    public Vector3 sideClimbMovement;
+    public Vector3 verticalClimbMovement;
+
+    public float climbDrag;
+    private float normalDrag;
+
     Rigidbody rb;
 
-    public float magnetStrength = 50f;
-    public bool magnitized = false;
-    private GameObject treeItself;
-    private Vector3 treeTransform;
-
-
-    private bool climbKeyPressed = false;
-
-    public int raycastDistance;
-
     // Use this for initialization
-    void Start () {
-        rb = GetComponent<Rigidbody>();
-        jump = new Vector3(0f, 2f, 0f);
+    void Start()
+    {
+        normalDrag = gameObject.GetComponent<Rigidbody>().drag;
+    }
 
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
-	}
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "TreeTrigger")
+        {
+            onTree = true;
+            gameObject.GetComponent<Rigidbody>().useGravity = false;
+            gameObject.GetComponent<Rigidbody>().drag = climbDrag;
+        }
+    }
 
-    private void OnCollisionStay(Collision other)
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "TreeTrigger")
+        {
+            onTree = false;
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
+            gameObject.GetComponent<Rigidbody>().drag = normalDrag;
+        }
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (onTree == false)
+        {
+            PlayerRunning();
+        }
+        else if (onTree == true)
+        {
+            PlayerClimbing();
+        }
+    }
+
+    void PlayerRunning()
+    {
+        if (Input.GetKey(forwardKey))
+        {
+            gameObject.GetComponent<Rigidbody>().AddRelativeForce(sideMovement, ForceMode.Impulse);
+        }
+
+        if (Input.GetKey(backKey))
+        {
+            gameObject.GetComponent<Rigidbody>().AddRelativeForce(-sideMovement, ForceMode.Impulse);
+        }
+
+        if (onTheGround == true)
+        {
+            if (Input.GetKeyDown(jumpKey))
+            {
+                onTheGround = false;
+                gameObject.GetComponent<Rigidbody>().AddForce(jump, ForceMode.Impulse);
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.tag == "Ground")
         {
             onTheGround = true;
         }
-
-        if (other.gameObject.tag == "Tree")
-        {
-            onTree = true;
-        }
     }
 
-    private void OnCollisionExit(Collision other)
+    void PlayerClimbing()
     {
-        if (other.gameObject.tag == "Tree")
+        if (Input.GetKey(forwardKey))
         {
-            onTree = false;
-            climbKeyPressed = false;
-            magnitized = false;
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Tree")
-        {
-            treeItself = this.gameObject;
-            magnitized = true;
-        }
-    }
-
-    // Update is called once per frame
-    void Update () {
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.back), out hit, raycastDistance))
-        {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.back) * hit.distance, Color.blue);
+            gameObject.GetComponent<Rigidbody>().AddForce(sideClimbMovement, ForceMode.Impulse);
         }
 
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.left), out hit, raycastDistance))
+        if (Input.GetKey(backKey))
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.left) * hit.distance, Color.red);
+            gameObject.GetComponent<Rigidbody>().AddForce(-sideClimbMovement, ForceMode.Impulse);
         }
 
-        else
+        if (Input.GetKey(climbUpKey))
         {
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward), Color.white);
+            gameObject.GetComponent<Rigidbody>().AddForce(verticalClimbMovement, ForceMode.Impulse);
         }
 
-        if (hit.transform.tag == "Tree")
+        if (Input.GetKey(climbDownKey))
         {
-            treeItself = this.gameObject;
-            magnitized = true;
+            gameObject.GetComponent<Rigidbody>().AddForce(-verticalClimbMovement, ForceMode.Impulse);
         }
-
-        if (onTheGround == true && (Input.GetKey(forwardKey) || Input.GetKey(backKey)))
-        {
-            Debug.Log("Insert Forest Gumpy qutoe about running");
-        }
-
-        else
-        {
-            if (magnitized)
-            {
-                Debug.Log("Work You piece of shis");
-                treeTransform = -(transform.position - treeItself.transform.position).normalized;
-                rb.velocity = hit.point * magnetStrength;
-
-                if (hit.distance <= 1)
-                {
-                    rb.velocity = new Vector3(0, 0, 0);
-                   onTree = true;
-                }
-                else if (hit.distance > 1)
-                {
-                    onTree = false;
-                }
-
-                rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
-            }
-        }
-
-        if (onTree == false)
-        {
-            climbKeyPressed = false;
-            magnitized = false;
-        }
-
-        if (Input.GetKey(jumpKey) && (onTheGround || onTree))
-        {
-            magnitized = false;
-            ReleaseXZConstraints();
-            rb.AddRelativeForce(jump * jumpHeight, ForceMode.Impulse);
-            onTheGround = false;
-            onTree = false;
-        }
-        if (onTheGround == true )
-        {
-            if (Input.GetKey(forwardKey))
-            {
-                magnitized = false;
-                ReleaseXZConstraints();
-                rb.AddForce(sideMovement * playerSpeed  , ForceMode.Impulse);
-            }
-
-            if (Input.GetKey(backKey))
-            {
-                magnitized = false;
-                ReleaseXZConstraints();
-                rb.AddForce(sideMovement * -playerSpeed, ForceMode.Impulse);
-            }
-        }
-
-        if (onTree == false)
-        {
-
-        if (onTheGround == false)
-        {
-            if (Input.GetKey(forwardKey))
-            {
-                magnitized = false;
-                ReleaseXZConstraints();
-                rb.AddRelativeForce(sideMovement * airSpeed, ForceMode.Impulse);
-            }
-
-            if (Input.GetKey(backKey))
-            {
-                magnitized = false;
-                ReleaseXZConstraints();
-                rb.AddRelativeForce(sideMovement * -airSpeed, ForceMode.Impulse);
-            }
-        }
-        }
-
-
-        if (onTree == true)
-        {
-
-            if (Input.GetKey(forwardKey))
-            {
-                magnitized = true;
-                rb.constraints &= ~RigidbodyConstraints.FreezePositionZ;
-                rb.AddForce(transform.forward * climbSpeed, ForceMode.Impulse);
-            }
-
-            if (Input.GetKey(backKey))
-
-            {
-                magnitized = true;
-                rb.constraints &= ~RigidbodyConstraints.FreezePositionZ;
-                rb.AddForce(transform.forward * -climbSpeed, ForceMode.Impulse);
-            }
-        }
-
-        if (onTree == true)
-        {
-            Debug.Log("Collision");
-            onTheGround = false;
-            if (Input.GetKey(climbUpKey) && (magnitized == true))
-            {
-                climbKeyPressed = true;
-
-                rb.AddForce(jump * climbSpeed, ForceMode.Impulse);
-
-            }
-
-            if (Input.GetKey(climbDownKey) && (magnitized == true))
-            {
-                climbKeyPressed = true;
-                rb.AddForce(jump * -climbSpeed, ForceMode.Impulse);
-            }
-
-        }       
-        if (hit.transform.tag == "Wall")
-        {
-            rb.constraints &= ~RigidbodyConstraints.FreezePosition;
-            magnitized = false;
-            onTree = false;
-
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if (climbKeyPressed == true)
-        {
-            if (GetComponent<Rigidbody>().velocity.magnitude > climbSpeed)
-            {
-                GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * climbSpeed;
-            }
-        }
-        else climbKeyPressed = false;
-    }
-
-    void ReleaseXZConstraints()
-    {
-        rb.constraints &= ~RigidbodyConstraints.FreezePositionX | ~RigidbodyConstraints.FreezePositionZ;
     }
 }

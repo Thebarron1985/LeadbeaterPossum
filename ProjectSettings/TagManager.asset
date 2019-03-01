@@ -9,6 +9,7 @@ TagManager:
   - Branch
   - Wall
   - Food
+  - TreeTrigger
   layers:
   - Default
   - TransparentFX
